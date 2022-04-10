@@ -30,22 +30,64 @@ v_cnt number;
 begin
     select count(*) into v_cnt from user_tables where table_name = upper('department');
     if v_cnt = 0 then
-        execute immediate ('Department table created');
-    else:
-        dbms_output.put_line('Department table already exists');
+        execute immediate ('CREATE TABLE DEPARTMENT(
+                            dept_id number(5) NOT NULL PRIMARY KEY,
+                            dept_name varchar(40) NOT NULL,
+                            dept_location varchar(40) NOT NULL)');
+        
+        dbms_output.put_line('Department table created');
+    else
+        execute immediate ('drop table department');
+        execute immediate ('CREATE TABLE DEPARTMENT(
+                            dept_id number(5) NOT NULL PRIMARY KEY,
+                            dept_name varchar(40) NOT NULL,
+                            dept_location varchar(40) NOT NULL)');
+        
+        dbms_output.put_line('Department table already exists; dropped and created again');
     end if;
 end;
+/
+
+declare
+v_cnt number;
+begin
+    select count(*) into v_cnt from user_sequences where sequence_name = upper('auto_increment_x1');
+    if v_cnt = 0 then
+        execute immediate('CREATE SEQUENCE auto_increment_x1
+                            MINVALUE 10000
+                            MAXVALUE 99999
+                            START WITH 10000
+                            INCREMENT BY 1');
+        dbms_output.put_line('Sequence has been created');
+    else
+        execute immediate('drop sequence auto_increment_x1');
+        execute immediate('CREATE SEQUENCE auto_increment_x1
+                            MINVALUE 10000
+                            MAXVALUE 99999
+                            START WITH 10000
+                            INCREMENT BY 1');
+        dbms_output.put_line('Sequence already exists; dropped and created again');
+        
+    end if;
+    execute immediate('ALTER TABLE department MODIFY dept_id NUMBER DEFAULT auto_increment_x1.NEXTVAL');
+    dbms_output.put_line('Table DEPARTMENT altered.');
+end;
+/
 
 
+    
+
+create or replace procedure insert_department(in_dept_name department.dept_name%TYPE, in_dept_location department.dept_location%TYPE)
+is
+v_cnt number;
+begin
+    execute immediate('insert into department(dept_name, dept_location) values(initcap('''|| in_dept_name ||'''),upper('''|| in_dept_location ||''') )');
+    dbms_output.put_line('Running stored proc');
+end;
+/
 
 
-
-
-
-
-
-
-
+exec insert_department('K', 'L')
 
 
 
