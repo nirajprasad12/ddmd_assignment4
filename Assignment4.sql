@@ -134,6 +134,7 @@ exec insert_department('Dept 3', 'IL');
 exec insert_department('Dept 4', 'CA');
 exec insert_department('Dept 5', 'NY');
 exec insert_department('Dept 6', 'RH');
+
 exec delete_rows_department();
 
 --Insert 6 good values to show handling of camel case when department does not exist
@@ -143,6 +144,7 @@ exec insert_department('dept mark', 'Il');
 exec insert_department('dePt scOtt', 'Ca');
 exec insert_department('john doe', 'Ny');
 exec insert_department('test cAse', 'rh');
+
 exec delete_rows_department();
 
 --Insert values to show handling of dept_name length > 20
@@ -168,6 +170,8 @@ exec insert_department(98765, 'MA');
 -- Accepted locations must only be (MA, TX, IL, CA, NY, NJ, NH, RH)
 exec insert_department('Dept 4', 'ND');
 
+exec delete_rows_department();
+
 -- Department name is unique. It updates location but does not allow inserting same department again.
 exec insert_department('Dept 1', 'MA');
 exec insert_department('Dept 1', 'TX');
@@ -176,12 +180,3 @@ select * from department;
 
 --insert, update, delete
 
-/*
-merge into department d_fin
-    using (select dept_id, dept_name, dept_location FROM department where dept_name = '1h') d_sel
-    on (d_fin.dept_id = d_sel.dept_id)
-    when matched then update set d_fin.dept_location = 'IL' 
-    delete where (d_sel.dept_location = 'MA')
-    when not matched then insert (d_fin.dept_name, d_fin.dept_location) values ('1h','TX');
-    
---insert into department(dept_name, dept_location) values ('1h', 'MA'); */
